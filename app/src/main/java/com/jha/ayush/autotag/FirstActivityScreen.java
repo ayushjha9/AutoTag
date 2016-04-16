@@ -15,8 +15,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.clarifai.api.ClarifaiClient;
 import com.clarifai.api.RecognitionRequest;
@@ -178,6 +180,10 @@ public class FirstActivityScreen extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+//        findViewById(R.id.editText).setFocusable(false);
+//        findViewById(R.id.editText).setClickable(true);
+        findViewById(R.id.editText).setOnKeyListener(null);
+//poop becuase fuck andriod studio
     }
 
     @Override
@@ -281,15 +287,18 @@ public class FirstActivityScreen extends AppCompatActivity {
         ArrayAdapter spinnerAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item,
                 arr);
-        System.out.println("SetDropDown");
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        System.out.println("SetAdapter");
         spinner.setAdapter(spinnerAdapter);
-        System.out.println("add items");
-        for(String item : temp)
+        StringBuilder sb = new StringBuilder();
+        for(String item : temp) {
             spinnerAdapter.add(item);
-        System.out.println("notify changes");
+            sb.append(item);
+        }
         spinnerAdapter.notifyDataSetChanged();
+
+        EditText tv = (EditText) findViewById(R.id.editText);
+
+        tv.setText(sb.toString());
     }
 
     private class ImageTags extends AsyncTask<Bitmap, Void, ArrayList<String>> {
@@ -325,7 +334,7 @@ public class FirstActivityScreen extends AppCompatActivity {
             for(Bitmap image: images) {
                 RecognitionResult results = recognizeBitmap(image);
                 for (Tag tag : results.getTags()) {
-                    clarifaiResults.add(tag.toString());
+                    clarifaiResults.add("#"+tag.getName()+ " ");
                     System.out.println(tag.toString());
 //                if (tag.getName().equals("portrait")){
 //                    System.out.println("Selfie"+ ": " + tag.getProbability());
