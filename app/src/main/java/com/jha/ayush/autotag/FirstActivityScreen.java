@@ -120,22 +120,14 @@ public class FirstActivityScreen extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
             Uri uri = data.getData();
-            String APP_ID = "nUkuc0I4q608b_9P0swUOgipJGsqjuoLj2ndk_NA";
-            String APP_SECRET = "adURL-SDWVhtEo5wtwA6Oci0yRhOEtevOGQsKWX4";
+
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 // Log.d(TAG, String.valueOf(bitmap));
 
                 ImageView imageView = (ImageView) findViewById(R.id.imageView);
                 imageView.setImageBitmap(bitmap);
-
-                ClarifaiClient clarifai = new ClarifaiClient(APP_ID, APP_SECRET);
-                List<RecognitionResult> results =
-                        clarifai.recognize(new RecognitionRequest(new File("kittens.jpg")));
-
-                for (Tag tag : results.get(0).getTags()) {
-                    System.out.println(tag.getName() + ": " + tag.getProbability());
-                }
+                new ImageTags().execute(bitmap); ;
             } catch (IOException e) {
                 e.printStackTrace();
             }
