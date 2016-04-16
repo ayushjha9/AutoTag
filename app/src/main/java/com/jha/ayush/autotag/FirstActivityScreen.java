@@ -183,7 +183,7 @@ public class FirstActivityScreen extends AppCompatActivity {
 //        findViewById(R.id.editText).setFocusable(false);
 //        findViewById(R.id.editText).setClickable(true);
         findViewById(R.id.editText).setOnKeyListener(null);
-
+//poop becuase fuck andriod studio
     }
 
     @Override
