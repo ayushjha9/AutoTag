@@ -24,6 +24,8 @@ public class GalleryActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+
     }
 
 }
