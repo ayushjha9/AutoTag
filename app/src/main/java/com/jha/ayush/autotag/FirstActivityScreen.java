@@ -1,6 +1,7 @@
 package com.jha.ayush.autotag;
 
 import android.annotation.SuppressLint;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +13,8 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -133,8 +136,7 @@ public class FirstActivityScreen extends AppCompatActivity {
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
-            Uri uri = data.getData();
-
+        Uri uri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 // Log.d(TAG, String.valueOf(bitmap));
@@ -150,6 +152,7 @@ public class FirstActivityScreen extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
     }
 
@@ -180,10 +183,26 @@ public class FirstActivityScreen extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-//        findViewById(R.id.editText).setFocusable(false);
-//        findViewById(R.id.editText).setClickable(true);
-        findViewById(R.id.editText).setOnKeyListener(null);
+        TextView tagDisplay = (TextView) findViewById(R.id.textView);
+        registerForContextMenu(tagDisplay);
+        tagDisplay.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                return true;
+            }
+        });
 //poop becuase fuck andriod studio
+    }
+
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
+        menu.add(0, v.getId(), 0, "Copy");
+
+        //cast the received View to TextView so that you can get its text
+        TextView yourTextView = (TextView) v;
+
+        //place your TextView's text in the clipboard
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        clipboard.setText(yourTextView.getText());
     }
 
     @Override
@@ -282,21 +301,21 @@ public class FirstActivityScreen extends AppCompatActivity {
     //TODO find why the list is repeated twice in the spinner
     public void updateSpinner(ArrayList<String> arr) {
         ArrayList<String> temp = new ArrayList<>(arr);
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        System.out.println("update spinner");
-        ArrayAdapter spinnerAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_dropdown_item,
-                arr);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
+//        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+//        System.out.println("update spinner");
+//        ArrayAdapter spinnerAdapter = new ArrayAdapter<String>(this,
+//                android.R.layout.simple_spinner_dropdown_item,
+//                arr);
+//        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner.setAdapter(spinnerAdapter);
         StringBuilder sb = new StringBuilder();
         for(String item : temp) {
-            spinnerAdapter.add(item);
+            //spinnerAdapter.add(item);
             sb.append(item);
         }
-        spinnerAdapter.notifyDataSetChanged();
+        //spinnerAdapter.notifyDataSetChanged();
 
-        EditText tv = (EditText) findViewById(R.id.editText);
+        TextView tv = (TextView) findViewById(R.id.textView);
 
         tv.setText(sb.toString());
     }
@@ -334,7 +353,7 @@ public class FirstActivityScreen extends AppCompatActivity {
             for(Bitmap image: images) {
                 RecognitionResult results = recognizeBitmap(image);
                 for (Tag tag : results.getTags()) {
-                    clarifaiResults.add("#"+tag.getName()+ " ");
+                        clarifaiResults.add("#"+toCamelCase(tag.getName())+ " ");
                     System.out.println(tag.toString());
 //                if (tag.getName().equals("portrait")){
 //                    System.out.println("Selfie"+ ": " + tag.getProbability());
@@ -375,6 +394,21 @@ public class FirstActivityScreen extends AppCompatActivity {
             }
         }
 
+        private String toCamelCase(String normalCase){
+            normalCase = normalCase.toLowerCase();
+            char cArr[] = normalCase.toCharArray();
+            cArr[0] -= 32;
+            for(int i=0; i<cArr.length; i++){
+                if(cArr[i] == ' ' && i+1<cArr.length){
+                    cArr[i+1] -= 32;
+                }
+            }
+
+            String camelCase = new String(cArr);
+            camelCase = camelCase.replaceAll(" ", "");
+
+            return camelCase;
+        }
     }
 
 }
