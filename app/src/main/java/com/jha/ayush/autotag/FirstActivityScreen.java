@@ -17,8 +17,6 @@ import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -33,10 +31,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -183,7 +179,8 @@ public class FirstActivityScreen extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        TextView tagDisplay = (TextView) findViewById(R.id.textView);
+        TextView tagDisplay = (TextView) findViewById(R.id.TagOutPut);
+        //tagDisplay.setVisibility(View.INVISIBLE);
         registerForContextMenu(tagDisplay);
         tagDisplay.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -315,9 +312,9 @@ public class FirstActivityScreen extends AppCompatActivity {
         }
         //spinnerAdapter.notifyDataSetChanged();
 
-        TextView tv = (TextView) findViewById(R.id.textView);
-
+        TextView tv = (TextView) findViewById(R.id.TagOutPut);
         tv.setText(sb.toString());
+        //tv.setVisibility(View.VISIBLE);
     }
 
     private class ImageTags extends AsyncTask<Bitmap, Void, ArrayList<String>> {
@@ -347,13 +344,12 @@ public class FirstActivityScreen extends AppCompatActivity {
 
         @Override
         protected ArrayList<String> doInBackground(Bitmap... images) {
-            System.out.println("Doin some background work, youknowwatimsayin");
-            System.out.println("DEEZ NUTS OBAMACARE 420 QUICKSCOPE BLAZEIT ..ERR");
 
             for(Bitmap image: images) {
                 RecognitionResult results = recognizeBitmap(image);
+                int i = 0;
                 for (Tag tag : results.getTags()) {
-                        clarifaiResults.add("#"+toCamelCase(tag.getName())+ " ");
+                    clarifaiResults.add("#"+toCamelCase(tag.getName())+ " ");
                     System.out.println(tag.toString());
 //                if (tag.getName().equals("portrait")){
 //                    System.out.println("Selfie"+ ": " + tag.getProbability());
