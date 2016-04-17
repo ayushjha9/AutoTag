@@ -30,14 +30,6 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView"
-            android:layout_gravity="center_horizontal|top"
-            android:maxHeight="800dp"
-            android:minHeight="500dp" />
-
         <Button
             android:layout_width="200dp"
             android:layout_height="80dp"
@@ -47,20 +39,27 @@
             android:onClick="openGallery"
             />
 
-        <Spinner
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/spinner"
-            android:layout_gravity="center" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/editText"
+            android:id="@+id/textView"
             android:layout_gravity="center_horizontal|top"
-            android:selectAllOnFocus="true"
-            android:elegantTextHeight="true"
-            android:editable="false" />
+            android:textSize="18dp"
+            android:textIsSelectable="true"
+            android:shadowColor="#ffffff"
+            android:typeface="sans"
+            android:paddingLeft="100dp"
+            android:background="#77676767" />
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/imageView"
+            android:layout_gravity="left|top"
+            android:maxHeight="100dp"
+            android:minHeight="100dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp" />
 
 
     </FrameLayout>
