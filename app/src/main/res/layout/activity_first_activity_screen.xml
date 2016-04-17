@@ -33,23 +33,17 @@
         <Button
             android:layout_width="200dp"
             android:layout_height="80dp"
-            android:text="Extract #Hashtags!"
+            android:text="@string/extract_hashtags"
             android:id="@+id/extractButton"
             android:layout_gravity="center_horizontal|bottom"
             android:onClick="openGallery"
             />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView"
-            android:layout_gravity="center_horizontal|top"
-            android:textSize="18dp"
-            android:textIsSelectable="true"
-            android:shadowColor="#ffffff"
-            android:typeface="sans"
-            android:paddingLeft="100dp"
-            android:background="#77676767" />
+        <SurfaceView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/surfaceView"
+            android:layout_gravity="left|top" />
 
         <ImageView
             android:layout_width="100dp"
@@ -59,7 +53,23 @@
             android:maxHeight="100dp"
             android:minHeight="100dp"
             android:layout_marginLeft="0dp"
-            android:layout_marginTop="0dp" />
+            android:layout_marginTop="0dp"
+            android:contentDescription="Image used to generate tags" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/TagOutPut"
+            android:layout_gravity="left|top"
+            android:textSize="12sp"
+            android:textIsSelectable="true"
+            android:shadowColor="#00ffffff"
+            android:paddingLeft="100dp"
+            android:background="#00000000"
+            android:password="false"
+            android:textColor="#e0ffffff"
+            android:textStyle="normal"
+            android:maxHeight="92dp" />
 
 
     </FrameLayout>
