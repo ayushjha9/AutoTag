@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="extract_hashtags">Extract #Hashtags!</string>
+    <string name="image_used_to_generate_tags">Image used to generate tags</string>
 </resources>
