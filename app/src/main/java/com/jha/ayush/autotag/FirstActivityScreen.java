@@ -18,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -76,6 +77,9 @@ public class FirstActivityScreen extends AppCompatActivity {
         }
     };
     private View mControlsView;
+    private Context mContext;
+    RelativeLayout mRelativeLayout;
+
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
