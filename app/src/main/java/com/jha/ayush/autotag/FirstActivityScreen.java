@@ -85,19 +85,20 @@ public class FirstActivityScreen extends AppCompatActivity {
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+//            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
     private View mControlsView;
     private Context mContext;
-    RelativeLayout mRelativeLayout;
     private List<ResultCard> resultCardList = new ArrayList<>();
     RVAdapter adapter = new RVAdapter(resultCardList);
+    RecyclerView rv;
+
 
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
@@ -158,71 +159,58 @@ public class FirstActivityScreen extends AppCompatActivity {
         Uri uri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                // Log.d(TAG, String.valueOf(bitmap));
-
-//                ImageView imageView = (ImageView) findViewById(R.id.imageView);
-//                imageView.setImageBitmap(bitmap);
-
-                //ArrayList<String> imageResults = new ArrayList<>();
                 new ImageTags().execute(bitmap);
-
-
-                //System.out.println("List: "+ imageResults.toString());
-                //updateSpinner(imageResults);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
-        adapter.notifyDataSetChanged();
     }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        card_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,15, getResources().getDisplayMetrics());
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_first_activity_screen);
+        card_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,150, getResources().getDisplayMetrics());
+
+        setContentView(R.layout.recyclerview_activity);
+        //set up a "list" for the cars to be added
+        rv = (RecyclerView)findViewById(R.id.rv);
+        //sets the recycle view to a list view
+        LinearLayoutManager llm = new LinearLayoutManager(mContext);
+        rv.setLayoutManager(llm);
+        rv.setAdapter(adapter);
+
+        //setContentView(R.layout.activity_first_activity_screen);
 
         mContext = getApplicationContext();
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
 
         mVisible = true;
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content_controls);
+//        mControlsView = findViewById(R.id.fullscreen_content_controls);
+//        mContentView = findViewById(R.id.fullscreen_content_controls);
 
         //mRelativeLayout = (RelativeLayout) findViewById(R.id.rv);
 
         // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
+//        mContentView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                toggle();
+//            }
+//        });
 
 
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.extractButton).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.fab).setOnTouchListener(mDelayHideTouchListener);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-        TextView tagDisplay = (TextView) findViewById(R.id.TagOutPut);
-        //tagDisplay.setVisibility(View.INVISIBLE);
-        registerForContextMenu(tagDisplay);
-        tagDisplay.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                return true;
-            }
-        });
-//poop becuase fuck andriod studio
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -261,7 +249,7 @@ public class FirstActivityScreen extends AppCompatActivity {
 //        if (actionBar != null) {
 //            actionBar.hide();
 //        }
-        mControlsView.setVisibility(View.GONE);
+//        mControlsView.setVisibility(View.GONE);
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
@@ -272,8 +260,8 @@ public class FirstActivityScreen extends AppCompatActivity {
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+//        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mVisible = true;
 
         // Schedule a runnable to display UI elements after a delay
@@ -308,17 +296,6 @@ public class FirstActivityScreen extends AppCompatActivity {
                 Uri.parse("android-app://com.jha.ayush.autotag/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
-
-
-        //set up a "list" for the cars to be added
-        RecyclerView rv = (RecyclerView)findViewById(R.id.rv);
-
-        //sets the recycle view to a list view
-        LinearLayoutManager llm = new LinearLayoutManager(mContext);
-        rv.setLayoutManager(llm);
-
-
-        rv.setAdapter(adapter);
     }
 
     @Override
@@ -341,105 +318,6 @@ public class FirstActivityScreen extends AppCompatActivity {
         client.disconnect();
     }
 
-    //TODO find why the list is repeated twice in the spinner
-    public void updateSpinner(ArrayList<String> arr) {
-        ArrayList<String> temp = new ArrayList<>(arr);
-//        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-//        System.out.println("update spinner");
-//        ArrayAdapter spinnerAdapter = new ArrayAdapter<String>(this,
-//                android.R.layout.simple_spinner_dropdown_item,
-//                arr);
-//        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinner.setAdapter(spinnerAdapter);
-        StringBuilder sb = new StringBuilder();
-        for(String item : temp) {
-            //spinnerAdapter.add(item);
-            sb.append(item);
-        }
-        //spinnerAdapter.notifyDataSetChanged();
-
-        TextView tv = (TextView) findViewById(R.id.TagOutPut);
-        tv.setText(sb.toString());
-        //tv.setVisibility(View.VISIBLE);
-    }
-
-    private void addCard(ArrayList<String> arr, Bitmap bitmap){
-        ArrayList<String> temp = new ArrayList<>(arr);
-        StringBuilder sb = new StringBuilder();
-        for(String item : temp) {
-            //spinnerAdapter.add(item);
-            sb.append(item);
-        }
-
-        // Initialize a new CardView
-        //CardView card = new CardView(mContext);
-
-//         //Set the CardView layoutParams
-//        LayoutParams params = new LayoutParams(
-//                LinearLayoutCompat.LayoutParams.MATCH_PARENT,
-//                LinearLayoutCompat.LayoutParams.WRAP_CONTENT
-//        );
-//
-//        params.gravity = Gravity.TOP;
-//        params.weight = 1.0f;
-
-        //card.setLayoutParams(new LinearLayoutCompat.LayoutParams(params));
-
-        // Set CardView corner radius
-//        card.setRadius(6);
-//
-//        card.setUseCompatPadding(true);
-//        int pad = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,15, getResources().getDisplayMetrics());
-//        card.setPaddingRelative(pad,pad,pad,0);
-//
-//        // Set cardView content padding
-//        card.setContentPadding(15, 15, 15, 15);
-//
-//        // Set a background color for CardView
-//        card.setCardBackgroundColor(R.color.colorPrimary);
-//
-//        // Set the CardView maximum elevation
-//        card.setMaxCardElevation(15);
-//
-//        // Set CardView elevation
-//        card.setCardElevation(2);
-
-
-
-
-        // Initialize a new TextView to put in CardView
-//        TextView tv = new TextView(mContext);
-//        ImageView iv = new ImageView(mContext);
-//        int max_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,150, getResources().getDisplayMetrics());
-//
-//        tv.setMaxHeight(max_height);
-//        tv.setMaxWidth(max_height);
-//        tv.setClickable(true);
-//        tv.setFocusable(true);
-//        tv.setSelectAllOnFocus(true);
-//
-//        iv.setImageBitmap(bitmap);
-//        iv.setMaxHeight(max_height);
-//        card.addView(iv);
-//
-//        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,150, getResources().getDisplayMetrics());
-//        tv.setPaddingRelative(max_height,5,5,5);
-//        tv.setText(sb.toString());
-//        tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-//        tv.setTextColor(Color.WHITE);
-//        tv.setScroller(new Scroller(mContext));
-//
-//        // Put the TextView in CardView
-//        card.addView(tv);
-//
-//        // Finally, add the CardView in root layout
-//        System.out.println(iv.getWidth());
-//        mRelativeLayout.addView(card);
-
-    }
-
-
-
     private class ImageTags extends AsyncTask<Bitmap, Void, ArrayList<String>> {
 
 
@@ -453,18 +331,6 @@ public class FirstActivityScreen extends AppCompatActivity {
         String APP_SECRET = "adURL-SDWVhtEo5wtwA6Oci0yRhOEtevOGQsKWX4";
         ClarifaiClient clarifai = new ClarifaiClient(APP_ID, APP_SECRET);
         ArrayList<String> clarifaiResults = new ArrayList<>();
-
-        //    public ImageTags(Context context){
-//        this.context = context;
-//        //this.rootView = rootView;
-//    }
-//
-//        public ImageTags(ArrayList<String> imageResults){
-////        this.spinDisplay = spinDisplay;
-////        this.context = context;
-//            clarifaiResults = imageResults;
-//        }
-
 
         @Override
         protected ArrayList<String> doInBackground(Bitmap... images) {
@@ -485,10 +351,7 @@ public class FirstActivityScreen extends AppCompatActivity {
         protected void onPostExecute(ArrayList<String> strings) {
             super.onPostExecute(strings);
             resultCardList.add(new ResultCard(strings, bm));
-
-            //addCard(strings, bm);
-            //updateSpinner(strings);
-
+            rv.setAdapter(adapter);
         }
 
         private RecognitionResult recognizeBitmap(Bitmap bitmap) {
@@ -530,63 +393,5 @@ public class FirstActivityScreen extends AppCompatActivity {
 
 
 
-
-}
-class ResultCard{
-    String hashTags;
-    Bitmap bitmap;
-
-    ResultCard(ArrayList<String> hashTags, Bitmap bitmap){
-        ArrayList<String> temp = new ArrayList<>(hashTags);
-        StringBuilder sb = new StringBuilder();
-        for(String item : temp) {
-            //spinnerAdapter.add(item);
-            sb.append(item);
-        }
-        this.hashTags = sb.toString();
-        this.bitmap = ThumbnailUtils.extractThumbnail(bitmap,FirstActivityScreen.card_height,FirstActivityScreen.card_height);
-    }
-}
-class RVAdapter extends RecyclerView.Adapter<RVAdapter.ResultViewHolder>{
-    List<ResultCard> resultCardList;
-
-    RVAdapter(List<ResultCard> resultCardList){
-        this.resultCardList = resultCardList;
-    }
-
-    @Override
-    public RVAdapter.ResultViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_first_activity_screen, parent,false);
-        ResultViewHolder rvh = new ResultViewHolder(v);
-        return rvh;
-    }
-
-    @Override
-    public void onBindViewHolder(RVAdapter.ResultViewHolder holder, int position) {
-        holder.hashTags.setText(resultCardList.get(position).hashTags);
-        holder.image.setImageBitmap(resultCardList.get(position).bitmap);
-    }
-
-    @Override
-    public int getItemCount() {
-        return resultCardList.size();
-    }
-
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
-    public static class ResultViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-        TextView hashTags;
-        ImageView image;
-
-        ResultViewHolder(View itemView) {
-            super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.card_view);
-            hashTags = (TextView)itemView.findViewById(R.id.TagOutPut);
-            image = (ImageView)itemView.findViewById(R.id.imageView);
-        }
-    }
 
 }

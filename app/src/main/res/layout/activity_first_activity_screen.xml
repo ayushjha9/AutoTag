@@ -29,40 +29,7 @@
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/TagOutPut"
-                    android:layout_gravity="left|top"
-                    android:textSize="16sp"
-                    android:textIsSelectable="true"
-                    android:shadowColor="#00ffffff"
-                    android:paddingLeft="150dp"
-                    android:background="#00000000"
-                    android:textColor="#e0ffffff"
-                    android:textStyle="normal"
-                    android:maxHeight="150dp"
-                    android:elevation="2dp" />
-
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:id="@+id/imageView"
-                    android:layout_gravity="left|top"
-                    android:maxHeight="150dp"
-                    android:minHeight="150dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="0dp"
-                    android:contentDescription="@string/image_used_to_generate_tags"
-                    android:elevation="2dp" />
-
-            </RelativeLayout>
         </LinearLayout>
 
         <Button
@@ -75,25 +42,8 @@
             android:elevation="2dp"
             android:background="@color/colorPrimaryDark" />
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/rv"
-            />
 
-        <android.support.v7.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card_view:cardCornerRadius="4dp"
-            card_view:cardElevation="2dp"
-            card_view:cardBackgroundColor="@color/colorPrimary"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            card_view:cardUseCompatPadding="true">
 
-        </android.support.v7.widget.CardView>
 
 
     </FrameLayout>
