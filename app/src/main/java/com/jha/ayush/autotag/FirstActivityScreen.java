@@ -5,6 +5,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,13 +15,24 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+
+import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Scroller;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -34,12 +48,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class FirstActivityScreen extends AppCompatActivity {
+
     private static final boolean AUTO_HIDE = true;
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -59,6 +75,7 @@ public class FirstActivityScreen extends AppCompatActivity {
     private GoogleApiClient client;
     private int PICK_IMAGE_REQUEST = 1;
     private View mContentView;
+    static int card_height = 0;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -79,6 +96,8 @@ public class FirstActivityScreen extends AppCompatActivity {
     private View mControlsView;
     private Context mContext;
     RelativeLayout mRelativeLayout;
+    private List<ResultCard> resultCardList = new ArrayList<>();
+    RVAdapter adapter = new RVAdapter(resultCardList);
 
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
@@ -141,11 +160,13 @@ public class FirstActivityScreen extends AppCompatActivity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 // Log.d(TAG, String.valueOf(bitmap));
 
-                ImageView imageView = (ImageView) findViewById(R.id.imageView);
-                imageView.setImageBitmap(bitmap);
+//                ImageView imageView = (ImageView) findViewById(R.id.imageView);
+//                imageView.setImageBitmap(bitmap);
 
                 //ArrayList<String> imageResults = new ArrayList<>();
                 new ImageTags().execute(bitmap);
+
+
                 //System.out.println("List: "+ imageResults.toString());
                 //updateSpinner(imageResults);
 
@@ -154,18 +175,26 @@ public class FirstActivityScreen extends AppCompatActivity {
             }
 
         }
+        adapter.notifyDataSetChanged();
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        card_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,15, getResources().getDisplayMetrics());
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_first_activity_screen);
+
+        mContext = getApplicationContext();
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content_controls);
 
+        //mRelativeLayout = (RelativeLayout) findViewById(R.id.rv);
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +203,8 @@ public class FirstActivityScreen extends AppCompatActivity {
                 toggle();
             }
         });
+
+
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
@@ -226,10 +257,10 @@ public class FirstActivityScreen extends AppCompatActivity {
 
     private void hide() {
         // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            actionBar.hide();
+//        }
         mControlsView.setVisibility(View.GONE);
         mVisible = false;
 
@@ -277,6 +308,17 @@ public class FirstActivityScreen extends AppCompatActivity {
                 Uri.parse("android-app://com.jha.ayush.autotag/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
+
+
+        //set up a "list" for the cars to be added
+        RecyclerView rv = (RecyclerView)findViewById(R.id.rv);
+
+        //sets the recycle view to a list view
+        LinearLayoutManager llm = new LinearLayoutManager(mContext);
+        rv.setLayoutManager(llm);
+
+
+        rv.setAdapter(adapter);
     }
 
     @Override
@@ -321,11 +363,89 @@ public class FirstActivityScreen extends AppCompatActivity {
         //tv.setVisibility(View.VISIBLE);
     }
 
+    private void addCard(ArrayList<String> arr, Bitmap bitmap){
+        ArrayList<String> temp = new ArrayList<>(arr);
+        StringBuilder sb = new StringBuilder();
+        for(String item : temp) {
+            //spinnerAdapter.add(item);
+            sb.append(item);
+        }
+
+        // Initialize a new CardView
+        //CardView card = new CardView(mContext);
+
+//         //Set the CardView layoutParams
+//        LayoutParams params = new LayoutParams(
+//                LinearLayoutCompat.LayoutParams.MATCH_PARENT,
+//                LinearLayoutCompat.LayoutParams.WRAP_CONTENT
+//        );
+//
+//        params.gravity = Gravity.TOP;
+//        params.weight = 1.0f;
+
+        //card.setLayoutParams(new LinearLayoutCompat.LayoutParams(params));
+
+        // Set CardView corner radius
+//        card.setRadius(6);
+//
+//        card.setUseCompatPadding(true);
+//        int pad = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,15, getResources().getDisplayMetrics());
+//        card.setPaddingRelative(pad,pad,pad,0);
+//
+//        // Set cardView content padding
+//        card.setContentPadding(15, 15, 15, 15);
+//
+//        // Set a background color for CardView
+//        card.setCardBackgroundColor(R.color.colorPrimary);
+//
+//        // Set the CardView maximum elevation
+//        card.setMaxCardElevation(15);
+//
+//        // Set CardView elevation
+//        card.setCardElevation(2);
+
+
+
+
+        // Initialize a new TextView to put in CardView
+//        TextView tv = new TextView(mContext);
+//        ImageView iv = new ImageView(mContext);
+//        int max_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,150, getResources().getDisplayMetrics());
+//
+//        tv.setMaxHeight(max_height);
+//        tv.setMaxWidth(max_height);
+//        tv.setClickable(true);
+//        tv.setFocusable(true);
+//        tv.setSelectAllOnFocus(true);
+//
+//        iv.setImageBitmap(bitmap);
+//        iv.setMaxHeight(max_height);
+//        card.addView(iv);
+//
+//        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,150, getResources().getDisplayMetrics());
+//        tv.setPaddingRelative(max_height,5,5,5);
+//        tv.setText(sb.toString());
+//        tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+//        tv.setTextColor(Color.WHITE);
+//        tv.setScroller(new Scroller(mContext));
+//
+//        // Put the TextView in CardView
+//        card.addView(tv);
+//
+//        // Finally, add the CardView in root layout
+//        System.out.println(iv.getWidth());
+//        mRelativeLayout.addView(card);
+
+    }
+
+
+
     private class ImageTags extends AsyncTask<Bitmap, Void, ArrayList<String>> {
 
 
         private Context context;
         private Spinner spinDisplay;
+        Bitmap bm;
         //private View rootView;
 
 
@@ -350,17 +470,12 @@ public class FirstActivityScreen extends AppCompatActivity {
         protected ArrayList<String> doInBackground(Bitmap... images) {
 
             for(Bitmap image: images) {
+                bm = image;
                 RecognitionResult results = recognizeBitmap(image);
                 int i = 0;
                 for (Tag tag : results.getTags()) {
                     clarifaiResults.add("#"+toCamelCase(tag.getName())+ " ");
                     System.out.println(tag.toString());
-//                if (tag.getName().equals("portrait")){
-//                    System.out.println("Selfie"+ ": " + tag.getProbability());
-//                }
-//                else {
-//                    System.out.println(tag.getName() + ": " + tag.getProbability());
-//                }
                 }
             }
             return clarifaiResults;
@@ -369,8 +484,10 @@ public class FirstActivityScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
             super.onPostExecute(strings);
-            System.out.println("onPostExicute");
-            updateSpinner(strings);
+            resultCardList.add(new ResultCard(strings, bm));
+
+            //addCard(strings, bm);
+            //updateSpinner(strings);
 
         }
 
@@ -408,6 +525,67 @@ public class FirstActivityScreen extends AppCompatActivity {
             camelCase = camelCase.replaceAll(" ", "");
 
             return camelCase;
+        }
+    }
+
+
+
+
+}
+class ResultCard{
+    String hashTags;
+    Bitmap bitmap;
+
+    ResultCard(ArrayList<String> hashTags, Bitmap bitmap){
+        ArrayList<String> temp = new ArrayList<>(hashTags);
+        StringBuilder sb = new StringBuilder();
+        for(String item : temp) {
+            //spinnerAdapter.add(item);
+            sb.append(item);
+        }
+        this.hashTags = sb.toString();
+        this.bitmap = ThumbnailUtils.extractThumbnail(bitmap,FirstActivityScreen.card_height,FirstActivityScreen.card_height);
+    }
+}
+class RVAdapter extends RecyclerView.Adapter<RVAdapter.ResultViewHolder>{
+    List<ResultCard> resultCardList;
+
+    RVAdapter(List<ResultCard> resultCardList){
+        this.resultCardList = resultCardList;
+    }
+
+    @Override
+    public RVAdapter.ResultViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_first_activity_screen, parent,false);
+        ResultViewHolder rvh = new ResultViewHolder(v);
+        return rvh;
+    }
+
+    @Override
+    public void onBindViewHolder(RVAdapter.ResultViewHolder holder, int position) {
+        holder.hashTags.setText(resultCardList.get(position).hashTags);
+        holder.image.setImageBitmap(resultCardList.get(position).bitmap);
+    }
+
+    @Override
+    public int getItemCount() {
+        return resultCardList.size();
+    }
+
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    public static class ResultViewHolder extends RecyclerView.ViewHolder {
+        CardView cv;
+        TextView hashTags;
+        ImageView image;
+
+        ResultViewHolder(View itemView) {
+            super(itemView);
+            cv = (CardView)itemView.findViewById(R.id.card_view);
+            hashTags = (TextView)itemView.findViewById(R.id.TagOutPut);
+            image = (ImageView)itemView.findViewById(R.id.imageView);
         }
     }
 
