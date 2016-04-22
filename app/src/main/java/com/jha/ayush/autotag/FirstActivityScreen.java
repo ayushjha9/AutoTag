@@ -350,7 +350,9 @@ public class FirstActivityScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
             super.onPostExecute(strings);
-            resultCardList.add(new ResultCard(strings, bm));
+            ResultCard card = new ResultCard(strings, bm);
+           // card.
+            resultCardList.add(card);
             rv.setAdapter(adapter);
         }
 
