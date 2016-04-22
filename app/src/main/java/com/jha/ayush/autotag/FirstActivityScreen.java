@@ -146,6 +146,7 @@ public class FirstActivityScreen extends AppCompatActivity {
         // Show only images, no videos or anything else
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
+        //intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         // Always show the chooser (if there are multiple options available)
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
@@ -156,14 +157,13 @@ public class FirstActivityScreen extends AppCompatActivity {
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
-        Uri uri = data.getData();
+            Uri uri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 new ImageTags().execute(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
