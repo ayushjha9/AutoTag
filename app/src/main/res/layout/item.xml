@@ -15,8 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="right|bottom"
-        android:padding="16dp"
-        >
+        android:padding="16dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -54,24 +53,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/copyButton"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_above="@+id/imageView"
             android:src="@drawable/ic_action_copy"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:paddingBottom="10dp" />
+            android:paddingBottom="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
 
-        <Button
+        <android.support.v7.widget.AppCompatImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Share"
-            android:id="@+id/button"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_above="@+id/imageView"
+            android:id="@+id/view"
+            android:src="@drawable/ic_action_share"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:textColor="@color/colorAccent"
-            android:paddingBottom="10dp" />
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/copyButton" />
 
     </RelativeLayout>
 
