@@ -5,6 +5,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,13 +15,24 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+
+import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Scroller;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -34,12 +48,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class FirstActivityScreen extends AppCompatActivity {
+
     private static final boolean AUTO_HIDE = true;
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -59,6 +75,7 @@ public class FirstActivityScreen extends AppCompatActivity {
     private GoogleApiClient client;
     private int PICK_IMAGE_REQUEST = 1;
     private View mContentView;
+    static int card_height = 0;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -68,17 +85,20 @@ public class FirstActivityScreen extends AppCompatActivity {
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+//            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
     private View mControlsView;
     private Context mContext;
-    RelativeLayout mRelativeLayout;
+    private List<ResultCard> resultCardList = new ArrayList<>();
+    RVAdapter adapter = new RVAdapter(resultCardList);
+    RecyclerView rv;
+
 
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
@@ -126,6 +146,7 @@ public class FirstActivityScreen extends AppCompatActivity {
         // Show only images, no videos or anything else
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
+        //intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         // Always show the chooser (if there are multiple options available)
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
@@ -136,62 +157,60 @@ public class FirstActivityScreen extends AppCompatActivity {
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
-        Uri uri = data.getData();
+            Uri uri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                // Log.d(TAG, String.valueOf(bitmap));
-
-                ImageView imageView = (ImageView) findViewById(R.id.imageView);
-                imageView.setImageBitmap(bitmap);
-
-                //ArrayList<String> imageResults = new ArrayList<>();
                 new ImageTags().execute(bitmap);
-                //System.out.println("List: "+ imageResults.toString());
-                //updateSpinner(imageResults);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
+        card_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,150, getResources().getDisplayMetrics());
 
-        setContentView(R.layout.activity_first_activity_screen);
+        setContentView(R.layout.recyclerview_activity);
+        //set up a "list" for the cars to be added
+        rv = (RecyclerView)findViewById(R.id.rv);
+        //sets the recycle view to a list view
+        LinearLayoutManager llm = new LinearLayoutManager(mContext);
+        rv.setLayoutManager(llm);
+        rv.setAdapter(adapter);
+
+        //setContentView(R.layout.activity_first_activity_screen);
+
+        mContext = getApplicationContext();
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
 
         mVisible = true;
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content_controls);
+//        mControlsView = findViewById(R.id.fullscreen_content_controls);
+//        mContentView = findViewById(R.id.fullscreen_content_controls);
 
+        //mRelativeLayout = (RelativeLayout) findViewById(R.id.rv);
 
         // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
+//        mContentView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                toggle();
+//            }
+//        });
+
+
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.extractButton).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.fab).setOnTouchListener(mDelayHideTouchListener);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-        TextView tagDisplay = (TextView) findViewById(R.id.TagOutPut);
-        //tagDisplay.setVisibility(View.INVISIBLE);
-        registerForContextMenu(tagDisplay);
-        tagDisplay.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                return true;
-            }
-        });
-//poop becuase fuck andriod studio
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -226,11 +245,11 @@ public class FirstActivityScreen extends AppCompatActivity {
 
     private void hide() {
         // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        mControlsView.setVisibility(View.GONE);
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            actionBar.hide();
+//        }
+//        mControlsView.setVisibility(View.GONE);
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
@@ -241,8 +260,8 @@ public class FirstActivityScreen extends AppCompatActivity {
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+//        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mVisible = true;
 
         // Schedule a runnable to display UI elements after a delay
@@ -299,33 +318,12 @@ public class FirstActivityScreen extends AppCompatActivity {
         client.disconnect();
     }
 
-    //TODO find why the list is repeated twice in the spinner
-    public void updateSpinner(ArrayList<String> arr) {
-        ArrayList<String> temp = new ArrayList<>(arr);
-//        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-//        System.out.println("update spinner");
-//        ArrayAdapter spinnerAdapter = new ArrayAdapter<String>(this,
-//                android.R.layout.simple_spinner_dropdown_item,
-//                arr);
-//        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinner.setAdapter(spinnerAdapter);
-        StringBuilder sb = new StringBuilder();
-        for(String item : temp) {
-            //spinnerAdapter.add(item);
-            sb.append(item);
-        }
-        //spinnerAdapter.notifyDataSetChanged();
-
-        TextView tv = (TextView) findViewById(R.id.TagOutPut);
-        tv.setText(sb.toString());
-        //tv.setVisibility(View.VISIBLE);
-    }
-
     private class ImageTags extends AsyncTask<Bitmap, Void, ArrayList<String>> {
 
 
         private Context context;
         private Spinner spinDisplay;
+        Bitmap bm;
         //private View rootView;
 
 
@@ -334,33 +332,16 @@ public class FirstActivityScreen extends AppCompatActivity {
         ClarifaiClient clarifai = new ClarifaiClient(APP_ID, APP_SECRET);
         ArrayList<String> clarifaiResults = new ArrayList<>();
 
-        //    public ImageTags(Context context){
-//        this.context = context;
-//        //this.rootView = rootView;
-//    }
-//
-//        public ImageTags(ArrayList<String> imageResults){
-////        this.spinDisplay = spinDisplay;
-////        this.context = context;
-//            clarifaiResults = imageResults;
-//        }
-
-
         @Override
         protected ArrayList<String> doInBackground(Bitmap... images) {
 
             for(Bitmap image: images) {
+                bm = image;
                 RecognitionResult results = recognizeBitmap(image);
                 int i = 0;
                 for (Tag tag : results.getTags()) {
                     clarifaiResults.add("#"+toCamelCase(tag.getName())+ " ");
                     System.out.println(tag.toString());
-//                if (tag.getName().equals("portrait")){
-//                    System.out.println("Selfie"+ ": " + tag.getProbability());
-//                }
-//                else {
-//                    System.out.println(tag.getName() + ": " + tag.getProbability());
-//                }
                 }
             }
             return clarifaiResults;
@@ -369,9 +350,8 @@ public class FirstActivityScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
             super.onPostExecute(strings);
-            System.out.println("onPostExicute");
-            updateSpinner(strings);
-
+            resultCardList.add(new ResultCard(strings, bm));
+            rv.setAdapter(adapter);
         }
 
         private RecognitionResult recognizeBitmap(Bitmap bitmap) {
@@ -410,5 +390,8 @@ public class FirstActivityScreen extends AppCompatActivity {
             return camelCase;
         }
     }
+
+
+
 
 }
