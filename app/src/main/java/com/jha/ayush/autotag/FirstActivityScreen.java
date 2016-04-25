@@ -96,7 +96,7 @@ public class FirstActivityScreen extends AppCompatActivity {
     private View mControlsView;
     private Context mContext;
     private List<ResultCard> resultCardList = new ArrayList<>();
-    RVAdapter adapter = new RVAdapter(resultCardList);
+    RVAdapter adapter = new RVAdapter(resultCardList, this);
     RecyclerView rv;
 
 
@@ -156,14 +156,8 @@ public class FirstActivityScreen extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-
             Uri uri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                new ImageTags().execute(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            new ImageTags().execute(uri);
         }
     }
 
@@ -318,12 +312,13 @@ public class FirstActivityScreen extends AppCompatActivity {
         client.disconnect();
     }
 
-    private class ImageTags extends AsyncTask<Bitmap, Void, ArrayList<String>> {
+    private class ImageTags extends AsyncTask<Uri, Void, ArrayList<String>> {
 
 
         private Context context;
         private Spinner spinDisplay;
         Bitmap bm;
+        Uri uri;
         //private View rootView;
 
 
@@ -333,15 +328,20 @@ public class FirstActivityScreen extends AppCompatActivity {
         ArrayList<String> clarifaiResults = new ArrayList<>();
 
         @Override
-        protected ArrayList<String> doInBackground(Bitmap... images) {
+        protected ArrayList<String> doInBackground(Uri... uris) {
 
-            for(Bitmap image: images) {
-                bm = image;
-                RecognitionResult results = recognizeBitmap(image);
-                int i = 0;
-                for (Tag tag : results.getTags()) {
-                    clarifaiResults.add("#"+toCamelCase(tag.getName())+ " ");
-                    System.out.println(tag.toString());
+            for(Uri uri: uris) {
+                try {
+                    bm = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                    RecognitionResult results = recognizeBitmap(bm);
+                    int i = 0;
+                    for (Tag tag : results.getTags()) {
+                        clarifaiResults.add("#"+toCamelCase(tag.getName())+ " ");
+                        System.out.println(tag.toString());
+                    }
+                    this.uri = uri;
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
             return clarifaiResults;
@@ -350,8 +350,7 @@ public class FirstActivityScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
             super.onPostExecute(strings);
-            ResultCard card = new ResultCard(strings, bm);
-           // card.
+            ResultCard card = new ResultCard(strings, bm, uri);
             resultCardList.add(card);
             rv.setAdapter(adapter);
         }
