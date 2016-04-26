@@ -77,6 +77,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ResultViewHolder>{
             });
             shareButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+                    ClipboardManager clipboard = (ClipboardManager) itemView.getContext().getSystemService(itemView.getContext().CLIPBOARD_SERVICE);
+                    clipboard.setText(hashTags.getText()+ " #AutoTag");
+                    Toast.makeText(itemView.getContext().getApplicationContext(), "Copied to clipboard", Toast.LENGTH_LONG).show();
                     String type = "image/*";
                     Share(type, uri);
                 }

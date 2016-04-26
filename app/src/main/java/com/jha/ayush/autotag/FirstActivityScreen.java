@@ -35,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.clarifai.api.ClarifaiClient;
 import com.clarifai.api.RecognitionRequest;
@@ -47,6 +48,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,6 +143,10 @@ public class FirstActivityScreen extends AppCompatActivity {
          * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
          */
     public void openGallery(View view) {
+        if(!isOnline()){
+            Toast.makeText(getApplicationContext(), "No Internet Conection", Toast.LENGTH_LONG).show();
+            return;
+        }
         //open gallery in response to clicking button
         Intent intent = new Intent();
         // Show only images, no videos or anything else
@@ -310,6 +316,21 @@ public class FirstActivityScreen extends AppCompatActivity {
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    public boolean isOnline() {
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
     }
 
     private class ImageTags extends AsyncTask<Uri, Void, ArrayList<String>> {
