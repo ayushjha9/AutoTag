@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.Spinner;
@@ -42,6 +43,7 @@ import com.clarifai.api.RecognitionResult;
 import com.clarifai.api.Tag;
 import com.clarifai.api.exception.ClarifaiException;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -184,12 +186,13 @@ public class FirstActivityScreen extends AppCompatActivity {
         String androidId;
         androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         AdView mAdView = (AdView) findViewById(R.id.adView);
+        //mAdView.setAdSize(AdSize.SMART_BANNER);
         AdRequest request = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
                 .addTestDevice(androidId)  // An example device ID
                 .build();
-        /*AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);*/
+        //AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(request);
         //set up a "list" for the cars to be added
         rv = (RecyclerView)findViewById(R.id.rv);
         //sets the recycle view to a list view
