@@ -50,9 +50,11 @@ public class RVAdapter
     }
 
     public void removeLoader(){
-        for(ResultCard resultCard : resultCardList){
-            resultCard.spinner.setVisibility(ProgressBar.GONE);
-        }
+        resultCardList.get(resultCardList.size()-1).spinner.setVisibility(ProgressBar.GONE);
+//        for(ResultCard resultCard : resultCardList){
+//            if(resultCard.spinner != null)
+//                resultCard.spinner.setVisibility(ProgressBar.GONE);
+//        }
     }
 
     @Override

@@ -77,7 +77,8 @@
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:elevation="4dp"
-            android:foregroundTint="@color/colorAccent" />
+            android:foregroundTint="@color/colorAccent"
+            android:visibility="gone" />
 
     </RelativeLayout>
 

@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.Spinner;
@@ -361,8 +362,17 @@ public class FirstActivityScreen extends AppCompatActivity {
         }
 
         @Override
-        protected ArrayList<String> doInBackground(Uri... uris) {
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            if(newCard.spinner != null) {
+                newCard.spinner.setVisibility(ProgressBar.VISIBLE);
+                adapter.notifyDataSetChanged();
+            }
+        }
 
+        @Override
+        protected ArrayList<String> doInBackground(Uri... uris) {
+            publishProgress();
             for(Uri uri: uris) {
                 try {
                     bm = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
@@ -384,7 +394,8 @@ public class FirstActivityScreen extends AppCompatActivity {
         protected void onPostExecute(ArrayList<String> strings) {
             super.onPostExecute(strings);
             newCard.setConents(strings, bm, uri);
-            adapter.removeLoader();
+            if(newCard.spinner != null)
+                newCard.spinner.setVisibility(ProgressBar.GONE);
             adapter.notifyDataSetChanged();
         }
 
