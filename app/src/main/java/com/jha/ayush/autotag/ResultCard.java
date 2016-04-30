@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.support.v7.widget.AppCompatImageButton;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,7 @@ public class ResultCard extends Activity{
     String hashTags;
     Bitmap bitmap;
     Uri uri;
+    ProgressBar spinner;
 
     ResultCard(ArrayList<String> hashTags, Bitmap bitmap, Uri uri){
         ArrayList<String> temp = new ArrayList<>(hashTags);
@@ -25,9 +27,21 @@ public class ResultCard extends Activity{
         this.hashTags = sb.toString();
         this.bitmap = ThumbnailUtils.extractThumbnail(bitmap,FirstActivityScreen.card_height,FirstActivityScreen.card_height);
         this.uri = uri;
+    }
 
-//        this.setContentView(R.layout.item);
-//        copyButton = (AppCompatImageButton) findViewById(R.id.copyButton);
+    ResultCard(){
+
+    }
+
+    public void setConents(ArrayList<String> hashTags, Bitmap bitmap, Uri uri){
+        ArrayList<String> temp = new ArrayList<>(hashTags);
+        StringBuilder sb = new StringBuilder();
+        for(String item : temp) {
+            sb.append(item);
+        }
+        this.hashTags = sb.toString();
+        this.bitmap = ThumbnailUtils.extractThumbnail(bitmap,FirstActivityScreen.card_height,FirstActivityScreen.card_height);
+        this.uri = uri;
     }
 
 }

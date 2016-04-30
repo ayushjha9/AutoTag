@@ -9,10 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +24,8 @@ import java.util.List;
 /**
  * Created by nick on 4/20/2016.
  */
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ResultViewHolder>{
+public class RVAdapter
+        extends RecyclerView.Adapter<RVAdapter.ResultViewHolder> {
     List<ResultCard> resultCardList;
     static Context contx;
 
@@ -43,6 +46,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ResultViewHolder>{
         holder.hashTags.setText(resultCardList.get(position).hashTags);
         holder.image.setImageBitmap(resultCardList.get(position).bitmap);
         holder.uri = resultCardList.get(position).uri;
+        resultCardList.get(position).spinner = holder.spinner;
+    }
+
+    public void removeLoader(){
+        for(ResultCard resultCard : resultCardList){
+            resultCard.spinner.setVisibility(ProgressBar.GONE);
+        }
     }
 
     @Override
@@ -60,6 +70,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ResultViewHolder>{
         ImageView image;
         AppCompatImageButton copyButton, shareButton;
         Uri uri;
+        ProgressBar spinner;
+        int position;
 
         ResultViewHolder(final View itemView) {
             super(itemView);
@@ -68,6 +80,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ResultViewHolder>{
             image = (ImageView)itemView.findViewById(R.id.imageView);
             copyButton = (AppCompatImageButton) itemView.findViewById(R.id.copyButton);
             shareButton = (AppCompatImageButton) itemView.findViewById(R.id.shareButton);
+            spinner = (ProgressBar) itemView.findViewById(R.id.progressBar);
             copyButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     ClipboardManager clipboard = (ClipboardManager) itemView.getContext().getSystemService(itemView.getContext().CLIPBOARD_SERVICE);
@@ -112,5 +125,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ResultViewHolder>{
 
     }
 
+}
+
+interface ItemTouchHelperAdapter {
+
+    void onItemMove(int fromPosition, int toPosition);
+
+    void onItemDismiss(int position);
 }
 

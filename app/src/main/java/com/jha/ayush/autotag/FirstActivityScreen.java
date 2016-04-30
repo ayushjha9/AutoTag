@@ -163,6 +163,10 @@ public class FirstActivityScreen extends AppCompatActivity {
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
+            if(!isOnline()){
+                Toast.makeText(getApplicationContext(), "No Internet Conection", Toast.LENGTH_LONG).show();
+                return;
+            }
             new ImageTags().execute(uri);
         }
     }
@@ -340,6 +344,7 @@ public class FirstActivityScreen extends AppCompatActivity {
         private Spinner spinDisplay;
         Bitmap bm;
         Uri uri;
+        private ResultCard newCard;
         //private View rootView;
 
 
@@ -347,6 +352,13 @@ public class FirstActivityScreen extends AppCompatActivity {
         String APP_SECRET = "adURL-SDWVhtEo5wtwA6Oci0yRhOEtevOGQsKWX4";
         ClarifaiClient clarifai = new ClarifaiClient(APP_ID, APP_SECRET);
         ArrayList<String> clarifaiResults = new ArrayList<>();
+
+        @Override
+        protected  void onPreExecute(){
+            newCard = new ResultCard();
+            resultCardList.add(newCard);
+            adapter.notifyDataSetChanged();
+        }
 
         @Override
         protected ArrayList<String> doInBackground(Uri... uris) {
@@ -371,9 +383,9 @@ public class FirstActivityScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
             super.onPostExecute(strings);
-            ResultCard card = new ResultCard(strings, bm, uri);
-            resultCardList.add(card);
-            rv.setAdapter(adapter);
+            newCard.setConents(strings, bm, uri);
+            adapter.removeLoader();
+            adapter.notifyDataSetChanged();
         }
 
         private RecognitionResult recognizeBitmap(Bitmap bitmap) {
