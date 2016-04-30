@@ -59,7 +59,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:paddingBottom="0dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_toStartOf="@+id/overflowButton" />
 
         <android.support.v7.widget.AppCompatImageButton
             android:layout_width="wrap_content"
@@ -79,6 +79,18 @@
             android:elevation="4dp"
             android:foregroundTint="@color/colorAccent"
             android:visibility="gone" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/overflowButton"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_action_overflow"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:paddingBottom="0dp"
+            android:paddingLeft="-5dp"
+            android:onClick="onButtonClickEvent" />
 
     </RelativeLayout>
 

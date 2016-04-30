@@ -219,15 +219,7 @@ public class FirstActivityScreen extends AppCompatActivity {
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
-        menu.add(0, v.getId(), 0, "Copy");
-
-        //cast the received View to TextView so that you can get its text
-        TextView yourTextView = (TextView) v;
-
-        //place your TextView's text in the clipboard
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        clipboard.setText(yourTextView.getText());
+        menu.add(0, v.getId(), 0, "Delete");
     }
 
     @Override
@@ -336,6 +328,13 @@ public class FirstActivityScreen extends AppCompatActivity {
         catch (InterruptedException e) { e.printStackTrace(); }
 
         return false;
+    }
+
+    public void onButtonClickEvent(View sender)
+    {
+        registerForContextMenu(sender);
+        openContextMenu(sender);
+        unregisterForContextMenu(sender);
     }
 
     private class ImageTags extends AsyncTask<Uri, Void, ArrayList<String>> {

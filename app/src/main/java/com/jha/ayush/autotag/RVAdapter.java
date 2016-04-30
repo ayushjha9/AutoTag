@@ -55,6 +55,7 @@ public class RVAdapter
 //            if(resultCard.spinner != null)
 //                resultCard.spinner.setVisibility(ProgressBar.GONE);
 //        }
+
     }
 
     @Override
@@ -70,7 +71,7 @@ public class RVAdapter
         CardView cv;
         TextView hashTags;
         ImageView image;
-        AppCompatImageButton copyButton, shareButton;
+        AppCompatImageButton copyButton, shareButton, overflowButton;
         Uri uri;
         ProgressBar spinner;
         int position;
@@ -82,6 +83,7 @@ public class RVAdapter
             image = (ImageView)itemView.findViewById(R.id.imageView);
             copyButton = (AppCompatImageButton) itemView.findViewById(R.id.copyButton);
             shareButton = (AppCompatImageButton) itemView.findViewById(R.id.shareButton);
+            overflowButton = (AppCompatImageButton) itemView.findViewById(R.id.overflowButton);
             spinner = (ProgressBar) itemView.findViewById(R.id.progressBar);
             copyButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -99,6 +101,7 @@ public class RVAdapter
                     Share(type, uri);
                 }
             });
+
         }
 
         public void Share(String type, Uri uri){
