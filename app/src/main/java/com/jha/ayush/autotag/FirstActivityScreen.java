@@ -190,12 +190,13 @@ public class FirstActivityScreen extends AppCompatActivity {
         androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         AdView mAdView = (AdView) findViewById(R.id.adView);
         //mAdView.setAdSize(AdSize.SMART_BANNER);
-        AdRequest request = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
-                .addTestDevice(androidId)  // An example device ID
-                .build();
-        //AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(request);
+//        AdRequest request = new AdRequest.Builder()
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+//                .addTestDevice(androidId)  // An example device ID
+//                .build();
+        AdRequest adRequest = new AdRequest.Builder().build();
+        //        mAdView.loadAd(request);
+        mAdView.loadAd(adRequest);
         //set up a "list" for the cars to be added
         rv = (RecyclerView)findViewById(R.id.rv);
         //sets the recycle view to a list view
