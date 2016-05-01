@@ -25,10 +25,12 @@ import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -100,9 +102,9 @@ public class FirstActivityScreen extends AppCompatActivity {
     };
     private View mControlsView;
     private Context mContext;
-    private List<ResultCard> resultCardList = new ArrayList<>();
-    RVAdapter adapter = new RVAdapter(resultCardList, this);
-    RecyclerView rv;
+    private static List<ResultCard> resultCardList = new ArrayList<>();
+    static RVAdapter adapter;
+    static RecyclerView rv;
 
 
     private final Runnable mShowPart2Runnable = new Runnable() {
@@ -180,6 +182,7 @@ public class FirstActivityScreen extends AppCompatActivity {
 
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
+        adapter = new RVAdapter(resultCardList, this);
         card_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,150, getResources().getDisplayMetrics());
 
         setContentView(R.layout.recyclerview_activity);
@@ -199,6 +202,7 @@ public class FirstActivityScreen extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(mContext);
         rv.setLayoutManager(llm);
         rv.setAdapter(adapter);
+        rv.setHasFixedSize(true);
 
         //setContentView(R.layout.activity_first_activity_screen);
 
@@ -207,20 +211,6 @@ public class FirstActivityScreen extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
 
         mVisible = true;
-//        mControlsView = findViewById(R.id.fullscreen_content_controls);
-//        mContentView = findViewById(R.id.fullscreen_content_controls);
-
-        //mRelativeLayout = (RelativeLayout) findViewById(R.id.rv);
-
-        // Set up the user interaction to manually show or hide the system UI.
-//        mContentView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                toggle();
-//            }
-//        });
-
-
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
@@ -229,10 +219,29 @@ public class FirstActivityScreen extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        registerForContextMenu(rv);
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getGroupId()){
+            case 1: adapter.removeCard(item.getItemId());
+                break;
+
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, v.getId(), 0, "Delete");
+        if (v.getId() == rv.getId()) {
+
+            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            ResultCard obj = (ResultCard) adapter.getItem(acmi.position);
+
+            menu.add(0, v.getLabelFor(), 0, "Delete Card");
+            menu.add(1, v.getLabelFor(), 1, "Edit Tags");
+        }
     }
 
     @Override
@@ -343,12 +352,12 @@ public class FirstActivityScreen extends AppCompatActivity {
         return false;
     }
 
-    public void onButtonClickEvent(View sender)
-    {
-        registerForContextMenu(sender);
-        openContextMenu(sender);
-        unregisterForContextMenu(sender);
-    }
+//    public void onButtonClickEvent(View sender)
+//    {
+//        registerForContextMenu(sender);
+//        openContextMenu(sender);
+//        unregisterForContextMenu(sender);
+//    }
 
     private class ImageTags extends AsyncTask<Uri, Void, ArrayList<String>> {
 

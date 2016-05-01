@@ -6,14 +6,6 @@
     android:padding="0dp"
     android:background="@color/background_floating_material_light">
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_height="fill_parent"
-        android:layout_width="fill_parent"
-        android:id="@+id/rv"
-        >
-
-    </android.support.v7.widget.RecyclerView>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,6 +36,14 @@
             android:layout_above="@+id/adView"
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="@dimen/fab_margin" />
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:id="@+id/rv"
+            android:layout_above="@+id/adView">
+
+        </android.support.v7.widget.RecyclerView>
     </RelativeLayout>
 
 
