@@ -339,7 +339,6 @@ public class FirstActivityScreen extends AppCompatActivity {
     }
 
     public boolean isOnline() {
-
         Runtime runtime = Runtime.getRuntime();
         try {
 
